@@ -5,6 +5,7 @@ let
   pythonEnv = pkgs.python3.withPackages (ps: with ps; [
     py3exiv2
     reverse-geocode
+    pillow
   ]);
 in
 
@@ -28,3 +29,4 @@ pkgs.symlinkJoin {
       --prefix PATH : $PATH
   '';
 }
+

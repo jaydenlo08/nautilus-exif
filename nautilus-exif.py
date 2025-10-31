@@ -2,6 +2,7 @@
 import gi
 import math
 import reverse_geocode
+from PIL import Image
 from fractions import Fraction
 from gi.repository import Nautilus, GObject
 from datetime import datetime
@@ -47,7 +48,7 @@ class NecExif(GObject.GObject,
             'label':       "Camera Model",
             'description': "Camera model (EXIF)",
         },
-        { #NEW
+        {
             'name':        "NautilusPython::exif_exposure",
             'attribute':   "exif_exposure",
             'label':       "Shutter Speed",
@@ -65,6 +66,12 @@ class NecExif(GObject.GObject,
             'label':       "ISO",
             'description': "ISO (EXIF)",
         },
+        {
+            'name':        "NautilusPython::exif_focal_length_column",
+            'attribute':   "exif_focal_length",
+            'label':       "Focal Length",
+            'description': "Focal Length (EXIF)",
+        },        
         {
             'name':        "NautilusPython::exif_exposure_compensation_column",
             'attribute':   "exif_exposure_compensation",
@@ -149,13 +156,13 @@ class MapPyExiv2:
         metadata = from_exiv(filename)
         metadata.read()
 
-        self.map(metadata)
+        self.map(metadata, filename)
 
     def to(self, fun) -> None:
         for (k, v) in self.__dict__.items():
             fun(k, v)
 
-    def map(self, i) -> None:
+    def map(self, i, filename) -> None:
         if v := i.get('Exif.Photo.DateTimeOriginal'):
             self.exif_datetime_original = v.value.strftime("%-d %b %Y")
         
@@ -176,7 +183,9 @@ class MapPyExiv2:
             
         if v := i.get('Exif.Photo.ISOSpeedRatings'):
             self.exif_iso = v.raw_value
-            
+        
+        if v := i.get('Exif.Photo.FocalLength'):
+            self.exif_focal_length = f"{round(float(Fraction(v.raw_value)),1)} mm"           
         
         if v := i.get('Exif.Photo.ExposureBiasValue'):
             tolerance = 1e-6
@@ -229,3 +238,10 @@ class MapPyExiv2:
         if (x := i.get('Exif.Photo.PixelXDimension')) and (y := i.get('Exif.Photo.PixelYDimension')):
             self.exif_resolution = f"{x.value}x{y.value}"
             self.exif_megapixel = f"{round(x.value*y.value/1000000)} MP"
+        # For files with missing resolution info in EXIF
+        else:
+            img = Image.open(filename)
+            self.exif_resolution = f"{img.width}x{img.height}"
+            self.exif_megapixel = f"{round(img.width*img.height/1000000)} MP"
+            
+            

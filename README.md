@@ -15,6 +15,7 @@ This script adds extra columns in Nautilus' list view from images' EXIF informat
 * Aperture (`FNumber`)
 * ISO (`ISOSpeedRatings`)
 * Exposure Compensation (`ExposureBiasValue`)
+* Focal Length (`FocalLength`)
 * GPS Location (via [reverse geocoding](https://pypi.org/project/reverse-geocode/))
 * GPS Altitude (`GPSAltitude`)
 * Flash Status (`Flash`)
@@ -43,9 +44,10 @@ sudo apt install nautilus-python
 Install the necessary Python libraries for this program to run:
 * [`py3exiv2`](https://launchpad.net/py3exiv2), [PyPI](https://pypi.org/project/py3exiv2/)
 * [`reverse_geocode`](https://github.com/richardpenman/reverse_geocode/), [PyPI](https://pypi.org/project/reverse-geocode/)
+* [`pillow`](https://github.com/python-pillow/Pillow), [PyPI](https://pypi.org/project/pillow/)
 
 ```bash
-pip3 install py3exiv2 reverse-geocode
+pip3 install py3exiv2 reverse-geocode pillow
 ```
 
 #### 3. Install
